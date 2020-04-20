@@ -1,44 +1,50 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# 【React+TS】集成讯飞实时语音听写/实时语音转写的 Demo
 
-## Available Scripts
+## 介绍
 
-In the project directory, you can run:
+在业务中用到了讯飞的一些服务，但因为价格原因公司决定弃用，故而将部分 demo 的代码分享出来，内部实现了一些简单的封装，方便后面其他人继承讯飞的上面两个服务时少走弯路。
 
-### `yarn start`
+## 主要代码关系
 
-Runs the app in the development mode.<br />
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+- `AudioAsrProcess.store.ts`: 全局存储的数据，便于在纯逻辑层操作
+- `AudioAsrProcess.ts`: 最终整合讯飞和音频相关代码暴露出来的接口
+- `AudioAsrXf.ts`: 讯飞识别相关代码
+- `AudioRecorder.ts`: 音频记录相关代码
+- `AudioConvert.ts`: 工具类：音频转换相关代码
+- `AudioPlayer.ts`: 工具类：音频播放相关代码
 
-The page will reload if you make edits.<br />
-You will also see any lint errors in the console.
+![关系图](docs/关系图.png)
 
-### `yarn test`
+## 主要使用方式
 
-Launches the test runner in the interactive watch mode.<br />
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+配置 `AppId/AppKey/apiSecret`，具体配置位置在 `AudioAsrProcess.xfAppConfig`。
 
-### `yarn build`
+```ts
+const audioAsrProcess = new AudioAsrProcess();
+//开始语音识别
+audioAsrProcess.start();
+//开始语音识别
+audioAsrProcess.stop();
+```
 
-Builds the app for production to the `build` folder.<br />
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## 其他功能
 
-The build is minified and the filenames include the hashes.<br />
-Your app is ready to be deployed!
+转换为 mp3
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+```ts
+let blob = AudioConvert.float32ArrayToMp3(
+  audioAsrProcess.audioRecorder.dataList
+);
+```
 
-### `yarn eject`
+播放 mp3
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+```ts
+new AudioPlayer(URL.createObjectURL(blob)).play();
+```
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+下载 mp3
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+```ts
+download(blob, "录制的音频.mp3");
+```
