@@ -1,10 +1,10 @@
 import React from "react";
-import AudioRecordZipDemo from "./views/AudioRecordZipDemo";
+import AudioXfDemo from "./views/AudioXfDemo";
 
 function App() {
   return (
     <div className="App">
-      <AudioRecordZipDemo />
+      <AudioXfDemo />
     </div>
   );
 }
